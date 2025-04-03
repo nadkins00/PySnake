@@ -35,7 +35,7 @@ class Snake(pygame.sprite.Sprite):
 
     #def update(self):
         #print("Update Snake")
-        #self.calcnewpos()
+        #self.calcnewpos() test
     
 
 #spawn an apple at a random location 
