@@ -6,9 +6,14 @@ from pygame.locals import *
 pygame.init()
 
 #create display surface
-DISPLAYSURF = pygame.display.set_mode((720, 720))
+PIX_HEIGHT = 720
+PIX_WIDTH = 720
+
+DISPLAYSURF = pygame.display.set_mode((PIX_WIDTH, PIX_HEIGHT))
+
 #define block size
 BLOCK = 10
+
 #define FPS 
 FPS = pygame.time.Clock()
 FPS.tick(30)
@@ -25,17 +30,16 @@ class Snake(pygame.sprite.Sprite):
     def __init__(self):
         #initialize the snake as a rect obj
         print("Initializing snake")
-        self.rect = pygame.Rect(0,0,BLOCK,BLOCK)
+        self.rect = pygame.Rect(int(PIX_HEIGHT/2),int(PIX_WIDTH/2),BLOCK,BLOCK)
         pygame.draw.rect(DISPLAYSURF, WHITE, self)
     
     #new position will move by one block in a single direction
-    def calcnewpos(self):
-        #pygame.self.move(BLOCK,BLOCK)
+    #def draw(self):
+        #print pygame.self.move(BLOCK,BLOCK)
         
-
-    #def update(self):
-        #print("Update Snake")
-        #self.calcnewpos() test test2 test3
+    def update(self):
+        print("Update Snake")
+        #self.draw()
     
 
 #spawn an apple at a random location 
@@ -60,7 +64,7 @@ def spawn_apple():
 def eat_apple():
     print("spawning new apple")
 
-#check user input
+#check user input and determine direction of snake
 def get_pressed_key():
     #creates array of user input 
     pressed_keys = pygame.key.get_pressed()
