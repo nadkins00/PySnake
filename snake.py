@@ -16,7 +16,7 @@ BLOCK = 10
 
 #define FPS 
 FPS = pygame.time.Clock()
-FPS.tick(30)
+FPS.tick(10)
 
 #define colors
 BLUE = (0,0,255)
@@ -30,20 +30,32 @@ class Snake(pygame.sprite.Sprite):
     def __init__(self):
         #initialize the snake as a rect obj
         print("Initializing snake")
-        self.rect = pygame.Rect(int(PIX_HEIGHT/2),int(PIX_WIDTH/2),BLOCK,BLOCK)
+
+        #initial position of snake block is in center of screen 
+        self.posx = int(PIX_HEIGHT/2)
+        self.posy = int(PIX_WIDTH/2)
+
+        #define the initial snake block 
+        self.rect = pygame.Rect(self.posx,self.posy,BLOCK,BLOCK)
+
+        #draw the initial snake block
+        pygame.draw.rect(DISPLAYSURF, WHITE, self)
+
+        #spawn the initial apple apple
+        spawn_apple(self.posx, self.posy)
+        
+    def pos(self):
+        #draw the new snake head 
+        self.rect = pygame.Rect(self.posx,self.posy,BLOCK,BLOCK)
+
+        #draw the initial snake block
         pygame.draw.rect(DISPLAYSURF, WHITE, self)
     
-    #new position will move by one block in a single direction
-    #def draw(self):
-        #print pygame.self.move(BLOCK,BLOCK)
-        
     def update(self):
-        print("Update Snake")
-        #self.draw()
-    
+        self.pos()
 
 #spawn an apple at a random location 
-def spawn_apple(): 
+def spawn_apple(posx, posy): 
     #creat a rectangle 10x10 pixels
     rect = pygame.Rect(0, 0, BLOCK, BLOCK)
     
@@ -51,9 +63,9 @@ def spawn_apple():
     surf_size = DISPLAYSURF.get_size()
 
     #exclude all points within a 10 block radius of the snake
-    x_rand = rand.randint(BLOCK*2,(surf_size[0]-(BLOCK*2)))
-    y_rand = rand.randint(BLOCK*2,(surf_size[1]-(BLOCK*2)))
-    rect.center = (x_rand, y_rand)
+    appl_x = rand.randint(BLOCK*2,(surf_size[0]-(BLOCK*2)))
+    appl_y = rand.randint(BLOCK*2,(surf_size[1]-(BLOCK*2)))
+    rect.center = (appl_x, appl_y)
     
     print("Spawning Apple at:",rect.center) 
     
@@ -62,7 +74,13 @@ def spawn_apple():
 
 #count score, clear all apples
 def eat_apple():
-    print("spawning new apple")
+    #is snake on top of apple 
+    #if snake on apple
+        #spawn new apple 
+        #return true 
+    #elif 
+    return False
+    
 
 #check user input and determine direction of snake
 def get_pressed_key():
@@ -71,20 +89,26 @@ def get_pressed_key():
     
     #check if the following four keys have been pressed 
     if pressed_keys[K_LEFT]: 
-        print("move left")
+        snake.posx += -BLOCK
         
-    elif pressed_keys[K_RIGHT]: 
-        print("move right")
+    elif pressed_keys[K_RIGHT]:
+        snake.posx += BLOCK
 
     elif pressed_keys[K_UP]:
-        print("move up")
+        snake.posy += -BLOCK
         
-    elif pressed_keys[K_DOWN]: 
-        print("move down") 
+    elif pressed_keys[K_DOWN]:
+        snake.posy += BLOCK
+
+def drawGrid():
+    for x in range(0, PIX_WIDTH, BLOCK):
+        for y in range(0, PIX_HEIGHT, BLOCK):
+            rect = pygame.Rect(x, y, BLOCK, BLOCK)
+            pygame.draw.rect(DISPLAYSURF, WHITE, rect, 1)
         
 #Initialize snake
 snake = Snake()
-
+drawGrid()
 #game loop
 while True:
     for event in pygame.event.get():
@@ -97,7 +121,8 @@ while True:
     #look for user input
     snake.update()
     get_pressed_key()
-    spawn_apple()
-    time.sleep(1)
-
+    
+    #check if snake ate the apple
+    
+    time.sleep(0.05)
     
