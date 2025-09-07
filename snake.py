@@ -16,7 +16,7 @@ DISPLAYSURF = pygame.display.set_mode((PIX_WIDTH, PIX_HEIGHT))
 BLOCK = 10
 
 #define FPS 
-FPS = 10
+SPEED = 15
 Clock = pygame.time.Clock()
 
 
@@ -31,14 +31,14 @@ BLACK = (0,0,0)
 #define snake
 class Snake(pygame.sprite.Sprite):
     def __init__(self):
-        #initialize the snake as a rect obj
+        #initialize the snake as a rect obj, 4 blocks long 
         print("Initializing snake")
-        #initial position of snake head is in center of screen [x, y] 
-        self.init_pos_h = [int(PIX_HEIGHT/2), int(PIX_WIDTH/2)]
-        self.init_pos_t = [int(PIX_HEIGHT/2), int(PIX_WIDTH/2)-BLOCK]
+        #initial position of snake head is in center of screen [x, y]
+        #define the snake using structure listed below 
+        self.init_pos = [int(PIX_HEIGHT/2), int(PIX_WIDTH/2)]
 
         #define the initial snake block 
-        self.rect_h = pygame.Rect(self.init_pos_h[0],self.init_pos_h[1],BLOCK,BLOCK)
+        self.rect_h = pygame.Rect(self.init_pos[0],self.init_pos[1],BLOCK,BLOCK*4)
         
         #draw the initial snake blocks
         pygame.draw.rect(DISPLAYSURF, WHITE, self.rect_h)
@@ -46,31 +46,26 @@ class Snake(pygame.sprite.Sprite):
         #initial velocity [x, y]
         self.vel = ([0, 0]) 
 
-    #snake has two attributes: head and tail
-    #track head block  
-    def calc_pos_h(self):
+    #track snakes position in an array, snake has pos(i) representing the length of the snake 
+    #pos(1) = x, y, pos(2) = x,y, pos(3) = x, y 
+    #snake structure is [[x, y]; [x, y]; [x, y]]
+    def calc_pos(self):
         #get the initial position, use the velocity vector to update
-        self.pos_h = [self.init_pos_h[0] + (self.vel[0] * BLOCK), self.init_pos_h[1] + (self.vel[1] * BLOCK)]         
-        print("new head position:", self.pos_h)
-        self.rect = pygame.Rect(self.pos_h[0],self.pos_h[1],BLOCK,BLOCK)
-        pygame.draw.rect(DISPLAYSURF, WHITE, self)
+        self.pos = [self.init_pos[0] + (self.vel[0] * BLOCK), self.init_pos[1] + (self.vel[1] * BLOCK)]         
+        print("new head position:", self.pos)
+        self.rect = pygame.Rect(self.pos[0],self.pos[1],BLOCK,BLOCK)
         
-    #track tail block, pass apple boolean 
-    def calc_pos_t(self):
-        #get the initial position, use the velocity vector to update        
-        self.pos_t = [self.init_pos_h[0], self.init_pos_h[1]]     
-        print("new tail position:", self.init_pos_h)
-        self.rect = pygame.Rect(self.init_pos_h[0],self.init_pos_h[1],BLOCK,BLOCK)
-        pygame.draw.rect(DISPLAYSURF, BLACK, self)
-
+        #fill the screen black 
+        DISPLAYSURF.fill((0,0,0))
+        pygame.draw.rect(DISPLAYSURF, WHITE, self)
+        self.init_pos = self.pos
 
     def update(self):
         
-        self.calc_pos_h()
-        self.calc_pos_t()
+        self.calc_pos()
         
-        self.init_pos_h = self.pos_h
-        self.init_pos_t = self.pos_t
+        
+        
 
 #spawn an apple at a random location on the grid 
 def spawn_apple(): 
@@ -139,7 +134,7 @@ while True:
         if event.type == QUIT:
             pygame.quit()
             sys.exit()
-    Clock.tick(FPS)
+    Clock.tick(SPEED)
     pygame.display.update()
     #look for user input
     get_pressed_key()
