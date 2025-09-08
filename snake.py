@@ -16,7 +16,7 @@ DISPLAYSURF = pygame.display.set_mode((PIX_WIDTH, PIX_HEIGHT))
 BLOCK = 10
 
 #define FPS 
-SPEED = 2
+SPEED = 3
 Clock = pygame.time.Clock()
 
 
@@ -45,9 +45,9 @@ class Snake(pygame.sprite.Sprite):
           
         #determine the initial position coordinates of the snake (4 blocks long) 
         self.init_pos = [[int(PIX_HEIGHT/2), int(PIX_WIDTH/2)], 
-                         [int(PIX_HEIGHT/2), int(PIX_WIDTH/2) - BLOCK], 
-                         [int(PIX_HEIGHT/2), int(PIX_WIDTH/2) - 2 * BLOCK],  
-                         [int(PIX_HEIGHT/2), int(PIX_WIDTH/2) - 3 * BLOCK],  
+                         [int(PIX_HEIGHT/2), int(PIX_WIDTH/2) + BLOCK], 
+                         [int(PIX_HEIGHT/2), int(PIX_WIDTH/2) + 2 * BLOCK],  
+                         [int(PIX_HEIGHT/2), int(PIX_WIDTH/2) + 3 * BLOCK],  
                         ]
         #loop through coordinates to draw blocks representing snake, then draw the blocks
         for x in range(len(self.init_pos)):
@@ -63,27 +63,26 @@ class Snake(pygame.sprite.Sprite):
     #pos(1) = x, y, pos(2) = x,y, pos(3) = x, y 
     #snake structure is [[x, y]; [x, y]; [x, y]]
     def new_pos(self):
-        #fill screen black to make the snake "move"
-        DISPLAYSURF.fill((0, 0, 0))
-        #get the initial position, use the velocity vector to update
-        #first move the head
-        self.pos[0] = [self.init_pos[0][0] + (self.vel[0] * BLOCK), 
+
+        for x in range(len(self.init_pos)):
+            
+                self.pos[x] = [self.init_pos[x][0] + (self.vel[0] * BLOCK), 
                         #calculate new y coordinates
-                        self.init_pos[0][1] + (self.vel[1] * BLOCK)]
-        self.rect[0] = pygame.Rect(self.pos[0][0], self.pos[0][1], BLOCK,BLOCK)
-        pygame.draw.rect(DISPLAYSURF, WHITE, self.rect[0])
-        #move the body 
-        for x in range(1, (len(self.init_pos))):
-                        #calculate new x coordinates
-            self.pos[x] = [self.init_pos[x][0], 
-                        #calculate new y coordinates
-                        self.init_pos[x][1]]  
-            #calculate new cooordinates for rectanges 
-            self.rect[x] = pygame.Rect(self.pos[x][0], self.pos[x][1], BLOCK,BLOCK)
-            pygame.draw.rect(DISPLAYSURF, WHITE, self.rect[x])
+                        self.init_pos[x][1] + (self.vel[1] * BLOCK)]
+                #calculate/draw rectangles 
+                self.rect[x] = pygame.Rect(self.pos[x][0], self.pos[x][1], BLOCK,BLOCK)
+
+        for x in range(len(self.init_pos)):
+            if x == 0:
+                pygame.draw.rect(DISPLAYSURF, WHITE, self.rect[x])
+
+            elif x == len(self.init_pos) - 1: 
+                pygame.draw.rect(DISPLAYSURF, BLACK, self.rect[x])
+            
+        #print("Orig Snake Pos:,", self.init_pos)
         print("New Snake Pos:", self.pos)
         self.init_pos = self.pos
-
+        
     def update(self):
         
         self.new_pos()
