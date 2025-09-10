@@ -13,12 +13,11 @@ PIX_WIDTH = 720
 DISPLAYSURF = pygame.display.set_mode((PIX_WIDTH, PIX_HEIGHT))
 
 #define block/grid size
-BLOCK = 10
+BLOCK = 20
 
 #define FPS 
-SPEED = 3
+SPEED = 15
 Clock = pygame.time.Clock()
-
 
 #define colors
 BLUE = (0,0,255)
@@ -27,69 +26,65 @@ GREEN = (0,255,0)
 WHITE = (255,255,255)
 BLACK = (0,0,0)
 
-
 #define snake
 class Snake(pygame.sprite.Sprite):
     def __init__(self):
-        #initialize the snake as a rect obj, 4 blocks long 
-        print("Initializing snake")
-        #create empty starting lists for values 
-        empt_list = [    [0, 0], 
-                         [0, 0], 
-                         [0, 0],  
-                         [0, 0],  
-                        ]  
+        
+        #create empty starting lists for values
+        #initialize state list 
+        empt_list = [[0, 0], 
+                    [0, 0], 
+                    [0, 0],  
+                    [0, 0],  
+                    ]  
         self.init_pos = empt_list
-        self.pos = empt_list
         self.rect = empt_list
-          
-        #determine the initial position coordinates of the snake (4 blocks long) 
+            
+        #determine the initial position coordinates of the snake (4 blocks long in screen center) 
+        #pos(x) represents a coordinate for each snake block.
         self.init_pos = [[int(PIX_HEIGHT/2), int(PIX_WIDTH/2)], 
                          [int(PIX_HEIGHT/2), int(PIX_WIDTH/2) + BLOCK], 
                          [int(PIX_HEIGHT/2), int(PIX_WIDTH/2) + 2 * BLOCK],  
                          [int(PIX_HEIGHT/2), int(PIX_WIDTH/2) + 3 * BLOCK],  
                         ]
-        #loop through coordinates to draw blocks representing snake, then draw the blocks
+        
+        #initialize final position list
+        self.pos = self.init_pos
+        self.draw_snake()
+        #initial velocity [x, y]
+        self.vel = ([0, -1]) 
+        #give the snake an initial velocity 
+        self.new_pos
+    
+    #create function to draw new snake based on a coordinate set (list)
+    def draw_snake(self):
+        #loop through coord of pos, then create and draw the blocks
         for x in range(len(self.init_pos)):
-            self.rect[x] = pygame.Rect(self.init_pos[x][0], self.init_pos[x][1],BLOCK,BLOCK)
-            #draw the initial snake blocks
+            self.rect[x] = pygame.Rect(self.pos[x][0], self.pos[x][1], BLOCK,BLOCK)
             pygame.draw.rect(DISPLAYSURF, WHITE, self.rect[x])
 
-        
-        #initial velocity [x, y]
-        self.vel = ([0, 0]) 
-        
-    #track snakes position in an array, snake has pos(i) representing the length of the snake 
+    #calculate the new position based on user input, 
     #pos(1) = x, y, pos(2) = x,y, pos(3) = x, y 
-    #snake structure is [[x, y]; [x, y]; [x, y]]
     def new_pos(self):
-
-        for x in range(len(self.init_pos)):
-            
-                self.pos[x] = [self.init_pos[x][0] + (self.vel[0] * BLOCK), 
-                        #calculate new y coordinates
-                        self.init_pos[x][1] + (self.vel[1] * BLOCK)]
-                #calculate/draw rectangles 
-                self.rect[x] = pygame.Rect(self.pos[x][0], self.pos[x][1], BLOCK,BLOCK)
-
-        for x in range(len(self.init_pos)):
-            if x == 0:
-                pygame.draw.rect(DISPLAYSURF, WHITE, self.rect[x])
-
-            elif x == len(self.init_pos) - 1: 
-                pygame.draw.rect(DISPLAYSURF, BLACK, self.rect[x])
-            
-        #print("Orig Snake Pos:,", self.init_pos)
-        print("New Snake Pos:", self.pos)
-        self.init_pos = self.pos
+        DISPLAYSURF.fill((0, 0, 0))
+        #first deal with head position 
+                        #calculate new x coordinate
+        new_head_pos = [self.init_pos[0][0] + (self.vel[0] * BLOCK), 
+                        #calculate new y coordinate
+                        self.init_pos[0][1] + (self.vel[1] * BLOCK)]
         
+        #insert new head pos to beginning of state list 
+        self.pos.insert(0, new_head_pos)
+
+        #remove last index, simulating movement 
+        self.pos.pop(-1)
+
+        #draw the snake
+        self.draw_snake()
+
     def update(self):
-        
         self.new_pos()
         
-        
-        
-
 #spawn an apple at a random location on the grid 
 def spawn_apple(): 
     #creat a rectangle 10x10 pixels
@@ -128,7 +123,7 @@ def get_pressed_key():
 
     #check if the following four keys have been pressed 
     if pressed_keys[K_LEFT]: 
-        snake.vel = [-1,0]
+        snake.vel = [-1, 0]
     elif pressed_keys[K_RIGHT]:
         snake.vel = [1, 0]
     elif pressed_keys[K_UP]:
@@ -147,8 +142,7 @@ def drawGrid():
 #Initialize snake
 snake = Snake()
 
-#for debug 
-#drawGrid()
+
 
 #game loop
 while True:
@@ -162,4 +156,5 @@ while True:
     get_pressed_key()
     snake.update() 
     #spawn_apple()
-    
+    #for debug 
+    drawGrid()
