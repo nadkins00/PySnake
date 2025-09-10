@@ -1,7 +1,5 @@
 import pygame, sys, time, random as rand 
 from pygame.locals import *
-#import numpy as np 
-
 
 #initialize pygame engine 
 pygame.init()
